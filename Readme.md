@@ -10,7 +10,7 @@ Features :
 
 Issues :
 - Runs at ~0.01 most of the time, but when inside of Chop Shop Zone with assigned car it will jump to ~0.07 or so while actively chopping a vehicle.
-- Not 100% sure it's an issue, but on my test server I don't have a lot of local cars, so I'm not sure if a local car will occasionally be in the spot that spawns the car.  If that happens just put let me know and I'll redo the spots into non parking spots only to ensure that won't happen. I've had local cars spawn in the space next to it but never in the exact location so just be advised it could happen.
+- Occasionally the assigned car can spawn on top of a local car if there is one in the same spot.  Still trying to figure out a way to check if theres a car there that isn't being utilized or owned by a player and replace it with the assigned car, until then its just an unfortunate thing to happen.
 
 ## Dependencies :
 QB Framework
