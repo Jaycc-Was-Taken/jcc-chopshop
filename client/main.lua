@@ -406,7 +406,7 @@ Citizen.CreateThread(function()
         local ped = PlayerPedId()
         local coords = GetEntityCoords(ped)
         if HasAssignment then
-            if not zoneSpawned and not zoneDeleted then -- It adds and removes a new octogon polyzone(please dont ask about the math i honestly dont know how i got it to work) around the location of the car spawn, and checks for if the player is in it
+            if not zoneSpawned and not zoneDeleted then -- This adds an octogon polyzone around the car, I stayed up way too late figuring this out one night just to realize the next morning I could've made a circle around it but now i kinda like it, it adds character
                 zoneSpawned = true
                 assignmentZone = PolyZone:Create({
                     vector2((currentLocation.x - 70.71), (currentLocation.y + 70.71)),

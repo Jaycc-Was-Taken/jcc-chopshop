@@ -2,7 +2,6 @@
 
 # A Chop Shop for QBCore Framework
 Features :
-- Has a easily configurable PED for assignment of a random vehicle and location after a short while via email.
 - The random location gives a 200 wide slightly transparent blue blip over the approximate vehicle location.  The vehicle can be anywhere within that zone, and the zone moves around the vehicle location.
 - All locations and vehicles easily configurable in the Config file.
 - Won't assign the same vehicle or location twice in a row.
@@ -18,3 +17,6 @@ PolyZone
 qb-target
 progressbar
 legacyfuel - But this is easy to change to whatever you use
+
+## Preview :
+https://www.youtube.com/watch?v=U8l9bOC-7-Y
