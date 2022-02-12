@@ -329,7 +329,7 @@ CreateThread(function()
         })
 end)
 Citizen.CreateThread(function()
-    local sleep = 100
+    local sleep = 1000
     local spawnedped = false
     while true do
         sleep = 1000
@@ -402,7 +402,7 @@ Citizen.CreateThread(function()
 end)
 Citizen.CreateThread(function()
     while true do
-        sleep = 100
+        sleep = 1000
         local ped = PlayerPedId()
         local coords = GetEntityCoords(ped)
         if HasAssignment then
