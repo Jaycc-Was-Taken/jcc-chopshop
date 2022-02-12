@@ -1,6 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local blackOut = false
-local blackoutTimer = 1
+local blackoutTimer = 0
 local CurVehPlate = nil
 local currentCar = {}
 local currentLocation = {}
@@ -16,15 +16,18 @@ local zoneDeleted = false
 local assignmentZone = nil
 local neededParts = 8
 local choppedParts = 0
+local Chopping = false
 local choppedCar = false
 local inChopArea = false
+local CurrentBodyHealth = 1000
+local CurrentEngineHealth = 1000
 local chopShopZone = CircleZone:Create(vector2(Config.MainLocations.list.x, Config.MainLocations.list.y), 100, {
-    name="chopShopZone", --Initially had both the assignment ped and around the same location but changed it and didn't change the names of the zones
+    name="chopShopZone",
     debugPoly = false,
     minZ = 25.0,
     maxZ = 35.0
    })
-local chopShopArea = PolyZone:Create({ --The normal scrapyard near the prison.  It's a polyzone around the shop area.
+local chopShopArea = PolyZone:Create({
     vector2(2343.5139160156, 3060.14453125),
     vector2(2343.7670898438, 3027.0148925781),
     vector2(2329.2336425781, 3026.9626464844),
@@ -365,7 +368,7 @@ Citizen.CreateThread(function()
                 distance = 3.0,
             })
         end
-        if inChopArea and HasAssignment and hasCar then
+        if inChopArea and HasAssignment and hasCar and (choppedParts == neededParts) then
             if not IsPedInAnyVehicle(ped, false) then
                 local closestVeh = QBCore.Functions.GetClosestVehicle()
                 if closestVeh ~= 0 and closestVeh ~= nil then
@@ -374,9 +377,11 @@ Citizen.CreateThread(function()
                     if #(pos - vector3(vehPos.x, vehPos.y, vehPos.z)) < 2.5 and not isChopping then
                         sleep = 1
                         if closestPlate == CurVehPlate then
-                            if choppedParts == neededParts then
+                            if not Chopping then
+                                SetVehicleEngineHealth(closestVeh, 0)
                                 exports["qb-drawtext"]:DrawText("[E] - Chop Vehicle", "left")
                                 if IsControlJustReleased(0, 38) then
+                                    Chopping = true
                                     exports['qb-drawtext']:HideText()
                                     RemoveBlip(DropBlip)
                                     local data = {
@@ -401,7 +406,7 @@ Citizen.CreateThread(function()
         local ped = PlayerPedId()
         local coords = GetEntityCoords(ped)
         if HasAssignment then
-            if not zoneSpawned and not zoneDeleted then -- It adds and removes a new octogon polyzone around the location of the car spawn, and checks for if the player is in it
+            if not zoneSpawned and not zoneDeleted then -- It adds and removes a new octogon polyzone(please dont ask about the math i honestly dont know how i got it to work) around the location of the car spawn, and checks for if the player is in it
                 zoneSpawned = true
                 assignmentZone = PolyZone:Create({
                     vector2((currentLocation.x - 70.71), (currentLocation.y + 70.71)),
@@ -461,8 +466,7 @@ chopShopArea:onPlayerInOut(function(isPointInside)
         inChopArea = false
     end
 end)
-RegisterNetEvent('jcc-chopshop:client:getCarAssignment')
-AddEventHandler('jcc-chopshop:client:getCarAssignment', function()
+RegisterNetEvent('jcc-chopshop:client:getCarAssignment', function()
     QBCore.Functions.Notify("I\'ll send you an email when I find something for you.")
     zoneDeleted = false
     local timer = 1
@@ -473,6 +477,8 @@ AddEventHandler('jcc-chopshop:client:getCarAssignment', function()
     Wait(timer * math.random(45000, 60000))
     local randomLocation = GetRandomLocation()
     local randomCar = GetRandomCar()
+    CurrentBodyHealth = 1000
+    CurrentEngineHealth = 1000
     currentLocation.x = Config.CarLocations[randomLocation].x
     currentLocation.y = Config.CarLocations[randomLocation].y
     currentLocation.z = Config.CarLocations[randomLocation].z
@@ -492,20 +498,20 @@ AddEventHandler('jcc-chopshop:client:getCarAssignment', function()
         }
     })
 end)
-RegisterNetEvent('jcc-chopshop:client:setMapMarker')
-AddEventHandler('jcc-chopshop:client:setMapMarker', function()
+RegisterNetEvent('jcc-chopshop:client:setMapMarker', function()
     HasAssignment = true
     Citizen.CreateThread(function()
         local xOffset = math.random(1,2)
-        local xROffset = math.random(1,100)
+        local xROffset = math.random(1,125)
         if xOffset == 1 then
-            xROffset = (0 - math.random(1,100))
+            xROffset = (0 - math.random(1,125))
         end
         local yOffset = math.random(1,2)
-        local yROffset = math.random(1,100)
+        local yROffset = math.random(1,125)
         if yOffset == 1 then
-            yROffset = (0 - math.random(1,100))
+            yROffset = (0 - math.random(1,125))
         end
+        --This is all some dumb shit to have the blip radius thing be offset randomly and can allow the vehicle to be up to 1 GTA unit from the edge of the blip radius
         RadiusBlip = AddBlipForRadius((currentLocation.x + xROffset), (currentLocation.y + yROffset), (currentLocation.z), 200.0)
         SetBlipRotation(RadiusBlip, 0)
         SetBlipColour(RadiusBlip, 30)
@@ -523,6 +529,7 @@ RegisterNetEvent('jcc-chopshop:chopTyre', function(data)
         local closestPlate = QBCore.Functions.GetPlate(closestVehicle)
         if closestPlate == CurVehPlate then
             if IsVehicleTyreBurst(closestVehicle, boneIndex, 1) then return end
+            if choppedParts == neededParts then return end --This is to not allow people to do more parts than the vehicle has if they take the vehicle to a bennys or something, working out a way to make it exploit proof but currently thats the main one, but its limited by this a lot.
                 QBCore.Functions.Progressbar("choptyre", "Chopping tire...", 15000, false, true, {
                     disableMovement = true,
                     disableCarMovement = true,
@@ -555,6 +562,7 @@ RegisterNetEvent('jcc-chopshop:chopDoor', function(data)
         local closestPlate = QBCore.Functions.GetPlate(closestVehicle)
         if closestPlate == CurVehPlate then
             if IsVehicleDoorDamaged(closestVehicle, boneIndex) then return end
+            if choppedParts == neededParts then return end
                 SetVehicleDoorOpen(closestVehicle, boneIndex, 0, 1)
                 QBCore.Functions.Progressbar("chopdoor", "Chopping...", 15000, false, true, {
                     disableMovement = true,
@@ -579,9 +587,18 @@ RegisterNetEvent('jcc-chopshop:chopDoor', function(data)
                     }
                 }, {}, function()
                     choppedParts = choppedParts + 1
+                    CurrentBodyHealth = CurrentBodyHealth - 200
+                    CurrentEnineHealth = CurrentEngineHealth - 75
                     TriggerServerEvent('jcc-chopshop:server:chopVehicle', part)
                     ClearPedTasks(ped)
                     SetVehicleDoorBroken(closestVehicle, boneIndex, 1)
+                    SetVehicleEngineHealth(closestVehicle, CurrentEngineHealth)
+                    SetVehicleBodyHealth(closestVehicle, CurrentBodyHealth)
+                    if boneIndex == 4 then 
+                        SmashVehicleWindow(closestVehicle, 6)
+                    elseif boneIndex == 5 then
+                        SmashVehicleWindow(closestVehicle, 7)
+                    end
                 end, function()
                     ClearPedTasks(ped)
                     QBCore.Functions.Notify("Canceled", "error")
@@ -591,7 +608,7 @@ RegisterNetEvent('jcc-chopshop:chopDoor', function(data)
 end)
 RegisterNetEvent('jcc-chopshop:chopBody', function(data)
     -- local boneIndex = data.args.boneIndex
-    local part = data.args.part
+    local part = data.part
     local ped = PlayerPedId()
     local coords = GetEntityCoords(ped)
     local inZone = chopShopArea:isPointInside(coords)
@@ -630,11 +647,13 @@ RegisterNetEvent('jcc-chopshop:chopBody', function(data)
                     choppedParts = 0
                     choppedCar = false
                     HasAssignment = false
+                    Chopping = false
                     blackoutTimer = (blackoutTimer + math.random(3,6))
                     TriggerServerEvent('jcc-chopshop:server:chopVehicle', part)
                     ClearPedTasks(ped)
                     DeleteEntity(closestVehicle)
                 end, function()
+                    Chopping = false
                     ClearPedTasks(ped)
                     QBCore.Functions.Notify("Canceled", "error")
                 end)
@@ -656,15 +675,6 @@ function GetRandomCar()
         randomPickupCar = math.random(1, #Config.CarTypes)
     end
     return randomPickupCar
-end
-function DeleteTorchProp()
-    local ped = PlayerPedId()
-    local coords = GetEntityCoords(ped)
-    local object = GetClosestObjectOfType(coords.x, coords.y, coords.z, 15.0, GetHashKey('prop_weld_torch'), false, false, false)
-    if object ~= 0 then
-        DeleteObject(object)
-        DeleteEntity(object)
-    end
 end
 Citizen.CreateThread(function()
     while true do

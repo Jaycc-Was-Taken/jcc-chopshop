@@ -1,4 +1,5 @@
 Config = {}
+
 Config.MainLocations = { --Actual chop location and the list location
     ["deliver"] = vector3(2342.08, 3051.5, 48.15), -- Blip location for vehicle drop off, scrap yard north of the prison
     ["list"] = vector4(472.32, -1876.42, 26.87, 30.47), --ped location
@@ -334,124 +335,119 @@ Config.CarTypes = { -- Available Cars
     [12] = {
         ["type"] = "turismor",
         ["name"] = "Grotti Turismo R",
-        ["parts"] = 8
+        ["parts"] = 7
     },
     [13] = {
-        ["type"] = "zentorno", 
-        ["name"] = "Pegassi Zentorno",
-        ["parts"] = 8
-    },
-    [14] = {
         ["type"] = "dominator",
         ["name"] = "Vapid Dominator",
         ["parts"] = 8
     },
-    [15] = {
+    [14] = {
         ["type"] = "blade",
         ["name"] = "Vapid Blade",
         ["parts"] = 8
     },
-    [16] = {
+    [15] = {
         ["type"] = "chino",
         ["name"] = "Vapid Chino",
         ["parts"] = 8
     },  
-    [17] = {
+    [16] = {
         ["type"] = "sabregt",
         ["name"] = "Declasse Sabre GT",
         ["parts"] = 8
     },
-    [18] = {
+    [17] = {
         ["type"] = "exemplar",
         ["name"] = "Dewbauchee Exemplar",
         ["parts"] = 8
     },
-    [19] = {
+    [18] = {
         ["type"] = "felon",
         ["name"] = "Lampadata Felon",
-        ["parts"] = 8
+        ["parts"] = 10
     },
-    [20] = {
+    [19] = {
         ["type"] = "sentinel",
         ["name"] = "Übermacht Sentinel",
         ["parts"] = 8
     },
-    [21] = {
+    [20] = {
         ["type"] = "blista",
         ["name"] = "Dinka Blista",
         ["parts"] = 8
     },
-    [22] = {
+    [21] = {
         ["type"] = "fusilade",
         ["name"] = "Schyster Fusilade",
         ["parts"] = 8
     },
-    [23] = {
+    [22] = {
         ["type"] = "jackal",
         ["name"] = "Ocelot Jackal",
-        ["parts"] = 8
+        ["parts"] = 10
     },
-    [24] = {
+    [23] = {
         ["type"] = "blista2",
         ["name"] = "Dinka Blista Compact",
         ["parts"] = 8
     },
-    [25] = { 
+    [24] = { 
         ["type"] = "rocoto", 
         ["name"] = "Obey Rocoto",
         ["parts"] = 10
     },
-    [26] = {
+    [25] = {
         ["type"] = "seminole", 
         ["name"] = "Canis Seminole",
         ["parts"] = 10
     },
-    [27] = {
+    [26] = {
         ["type"] = "landstalker",
         ["name"] = "Dundreary Landstalker",
         ["parts"] = 10
     },
-    [28] = {
+    [27] = {
         ["type"] = "picador",
         ["name"] = "Cheval Picador",
         ["parts"] = 8
     },
-    [29] = {
+    [28] = {
         ["type"] = "prairie", 
         ["name"] = "Bollokan Prairie",
         ["parts"] = 8
     },
-    [30] = {
+    [29] = {
         ["type"] = "bobcatxl",
         ["name"] = "Vapid Bobcat XL",
         ["parts"] = 8
     }, 
-    [31] = {
+    [30] = {
         ["type"] = "gauntlet",
         ["name"] = "Bravado Gauntlet",
         ["parts"] = 8
     },
-    [32] = {
+    [31] = {
         ["type"] = "virgo",
         ["name"] = "Albany Virgo",
         ["parts"] = 8
     },
-    [33] = {
+    [32] = {
         ["type"] = "fq2",
         ["name"] = "Fathom FQ 2",
         ["parts"] = 10
     },
-    [34] = {
+    [33] = {
         ["type"] = "jester",
         ["name"] = "Dinka Jester",
         ["parts"] = 8
     },
-    [35] = {
+    [34] = {
         ["type"] = "rhapsody",
         ["name"] = "Declasse Rhapsody",
         ["parts"] = 8
     },
-    [36] = {
+    [35] = {
         ["type"] = "feltzer2",    
         ["name"] = "Benefactor Feltzer",
         ["parts"] = 8
