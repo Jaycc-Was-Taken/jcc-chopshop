@@ -20,6 +20,7 @@ Features :
 - QB Framework
 - PolyZone
 - qb-target
+- qb-drawtext - This one needs to be used, or in client/main.lua ~line 382 you need to edit these exports to the drawtext of your choice.
 - progressbar
 - legacyfuel - But this is easy to change to whatever you use
 
