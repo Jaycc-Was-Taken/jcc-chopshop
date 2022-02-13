@@ -327,6 +327,20 @@ CreateThread(function()
             },
             distance = 1,
         })
+        exports['qb-target']:AddBoxZone('chopShopPed', vector3(Config.MainLocations.list.x, Config.MainLocations.list.y, Config.MainLocations.list.z), 1.0, 1.0, {
+            heading = Config.MainLocations.list.w,
+            minZ = (Config.MainLocations.list.z - 1),
+            maxZ = (Config.MainLocations.list.z + 1),
+        }, {
+            options = {
+                {
+                type = "client",
+                event = "jcc-chopshop:client:getCarAssignment",
+                label = "Ask Jay for a Job.",
+                },
+            }, 
+            distance = 3.0,
+        })
 end)
 Citizen.CreateThread(function()
     local sleep = 1000
@@ -349,24 +363,7 @@ Citizen.CreateThread(function()
         elseif not inZone and spawnedped then
             spawnedped = false
             DeletePed(chopShopPed)
-            exports['qb-target']:RemoveZone('chopShopPed')
         end
-        if inZone and spawnedped then
-            sleep = 2500
-            exports['qb-target']:AddBoxZone('chopShopPed', vector3(Config.MainLocations.list.x, Config.MainLocations.list.y, Config.MainLocations.list.z), 1.0, 1.0, {
-                heading = Config.MainLocations.list.w,
-                minZ = (Config.MainLocations.list.z - 1),
-                maxZ = (Config.MainLocations.list.z + 1),
-            }, {
-                options = {
-                    {
-                    type = "client",
-                    event = "jcc-chopshop:client:getCarAssignment",
-                    label = "Ask Jay for a Job.",
-                    },
-                }, 
-                distance = 3.0,
-            })
         end
         if inChopArea and HasAssignment and hasCar and (choppedParts == neededParts) then
             if not IsPedInAnyVehicle(ped, false) then
@@ -375,9 +372,9 @@ Citizen.CreateThread(function()
                     local vehPos = GetEntityCoords(closestVeh)
                     local closestPlate = QBCore.Functions.GetPlate(closestVeh)
                     if #(pos - vector3(vehPos.x, vehPos.y, vehPos.z)) < 2.5 and not isChopping then
-                        sleep = 1
                         if closestPlate == CurVehPlate then
                             if not Chopping then
+                                sleep = 1
                                 SetVehicleEngineHealth(closestVeh, 0)
                                 exports["qb-drawtext"]:DrawText("[E] - Chop Vehicle", "left")
                                 if IsControlJustReleased(0, 38) then

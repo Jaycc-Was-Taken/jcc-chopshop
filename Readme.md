@@ -15,6 +15,8 @@ Features :
 - Still working on rewards, obviously change as you need.
 - Working on getting it to run better during the last chop cycle (chopping the whole body)
 - Would like to have multiple drop off locations for the vehicle that it gives at random after you obtain it rather than just 1 location.
+- Generally optimizing the script and cleaning it up, probably going to try and split up the script into  multiple client sided files just to make it all more readable.
+
 
 ## Dependencies :
 - QB Framework
