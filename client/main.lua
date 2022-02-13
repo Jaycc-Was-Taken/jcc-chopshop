@@ -364,7 +364,6 @@ Citizen.CreateThread(function()
             spawnedped = false
             DeletePed(chopShopPed)
         end
-        end
         if inChopArea and HasAssignment and hasCar and (choppedParts == neededParts) then
             if not IsPedInAnyVehicle(ped, false) then
                 local closestVeh = QBCore.Functions.GetClosestVehicle()
