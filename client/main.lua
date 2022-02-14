@@ -375,10 +375,10 @@ Citizen.CreateThread(function()
                             if not Chopping then
                                 sleep = 1
                                 SetVehicleEngineHealth(closestVeh, 0)
-                                exports["qb-drawtext"]:DrawText("[E] - Chop Vehicle", "left")
+                                exports["qb-core"]:DrawText("[E] - Chop Vehicle", "left")
                                 if IsControlJustReleased(0, 38) then
                                     Chopping = true
-                                    exports['qb-drawtext']:HideText()
+                                    exports['qb-core']:HideText()
                                     RemoveBlip(DropBlip)
                                     local data = {
                                         part = 'bodyshell'
@@ -388,7 +388,7 @@ Citizen.CreateThread(function()
                             end
                         end
                     else
-                        exports["qb-drawtext"]:HideText()
+                        exports["qb-core"]:HideText()
                     end
                 end
             end
@@ -426,7 +426,7 @@ Citizen.CreateThread(function()
                     QBCore.Functions.SpawnVehicle(currentCar.type, function(veh)
                         SetVehicleNumberPlateText(veh, CurVehPlate)
                         SetEntityHeading(veh, currentLocation.w)
-                        exports['LegacyFuel']:SetFuel(veh, 100.0)
+                        exports['lj-fuel']:SetFuel(veh, 100.0)
                         SetEntityAsMissionEntity(veh, true, true)
                     end, currentLocation, true)
                     vehicleSpawned = true

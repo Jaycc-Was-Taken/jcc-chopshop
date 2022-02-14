@@ -16,15 +16,14 @@ Features :
 - Working on getting it to run better during the last chop cycle (chopping the whole body)
 - Would like to have multiple drop off locations for the vehicle that it gives at random after you obtain it rather than just 1 location.
 - Generally optimizing the script and cleaning it up, probably going to try and split up the script into  multiple client sided files just to make it all more readable.
-
+- I think I can do the ped spawner to be more fluid so that will be worked on as well.
 
 ## Dependencies :
 - QB Framework
 - PolyZone
 - qb-target
-- qb-drawtext - This one needs to be used, or in client/main.lua ~line 382 you need to edit these exports to the drawtext of your choice.
 - progressbar
-- legacyfuel - But this is easy to change to whatever you use
+- lj-fuel - But this is easy to change to whatever you use
 
 ## Preview :
 https://www.youtube.com/watch?v=U8l9bOC-7-Y
