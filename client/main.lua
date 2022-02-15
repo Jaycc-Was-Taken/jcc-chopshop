@@ -347,7 +347,8 @@ Citizen.CreateThread(function()
     local spawnedped = false
     while true do
         sleep = 1000
-        local pos = GetEntityCoords(PlayerPedId())
+        local ped = PlayerPedId()
+        local pos = GetEntityCoords(ped)
         local inZone = chopShopZone:isPointInside(pos)
         if inZone and not spawnedped then
             spawnedped = true
@@ -370,7 +371,7 @@ Citizen.CreateThread(function()
                 if closestVeh ~= 0 and closestVeh ~= nil then
                     local vehPos = GetEntityCoords(closestVeh)
                     local closestPlate = QBCore.Functions.GetPlate(closestVeh)
-                    if #(pos - vector3(vehPos.x, vehPos.y, vehPos.z)) < 2.5 and not isChopping then
+                    if #(pos - vector3(vehPos.x, vehPos.y, vehPos.z)) < 2.5 and not Chopping then
                         if closestPlate == CurVehPlate then
                             if not Chopping then
                                 sleep = 1
@@ -507,7 +508,7 @@ RegisterNetEvent('jcc-chopshop:client:setMapMarker', function()
         if yOffset == 1 then
             yROffset = (0 - math.random(1,125))
         end
-        --This is all some dumb shit to have the blip radius thing be offset randomly and can allow the vehicle to be up to 1 GTA unit from the edge of the blip radius
+        --This is all some dumb shit to have the blip radius thing be offset randomly and can allow the vehicle to be up to 1 GTA unit from the edge of the blip radius EDIT: I actually don't know if this is true anymore, I've edited it around some after it spawned slightly outside the zone so I'm still tweaking it.
         RadiusBlip = AddBlipForRadius((currentLocation.x + xROffset), (currentLocation.y + yROffset), (currentLocation.z), 200.0)
         SetBlipRotation(RadiusBlip, 0)
         SetBlipColour(RadiusBlip, 30)
@@ -525,7 +526,7 @@ RegisterNetEvent('jcc-chopshop:chopTyre', function(data)
         local closestPlate = QBCore.Functions.GetPlate(closestVehicle)
         if closestPlate == CurVehPlate then
             if IsVehicleTyreBurst(closestVehicle, boneIndex, 1) then return end
-            if choppedParts == neededParts then return end --This is to not allow people to do more parts than the vehicle has if they take the vehicle to a bennys or something, working out a way to make it exploit proof but currently thats the main one, but its limited by this a lot.
+            if choppedParts == neededParts then return end --This is to not allow people to do more parts than the vehicle has if they take the vehicle to a bennys or something, working out a way to make it exploit proof but currently thats the main one, but its limited by this a lot, but this should always be inside the zone, I'm working on making it up to 1 gta unit from edge.
                 QBCore.Functions.Progressbar("choptyre", "Chopping tire...", 15000, false, true, {
                     disableMovement = true,
                     disableCarMovement = true,
