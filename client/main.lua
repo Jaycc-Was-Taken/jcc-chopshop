@@ -343,12 +343,11 @@ CreateThread(function()
         })
 end)
 Citizen.CreateThread(function()
-    local sleep = 1000
+    local sleep = 100
     local spawnedped = false
     while true do
         sleep = 1000
-        local ped = PlayerPedId()
-        local pos = GetEntityCoords(ped)
+        local pos = GetEntityCoords(PlayerPedId())
         local inZone = chopShopZone:isPointInside(pos)
         if inZone and not spawnedped then
             spawnedped = true
@@ -364,6 +363,7 @@ Citizen.CreateThread(function()
         elseif not inZone and spawnedped then
             spawnedped = false
             DeletePed(chopShopPed)
+            exports['qb-target']:RemoveZone('chopShopPed')
         end
         if inChopArea and HasAssignment and hasCar and (choppedParts == neededParts) then
             if not IsPedInAnyVehicle(ped, false) then
@@ -371,24 +371,18 @@ Citizen.CreateThread(function()
                 if closestVeh ~= 0 and closestVeh ~= nil then
                     local vehPos = GetEntityCoords(closestVeh)
                     local closestPlate = QBCore.Functions.GetPlate(closestVeh)
-                    if #(pos - vector3(vehPos.x, vehPos.y, vehPos.z)) < 2.5 and not Chopping then
+                    if #(pos - vector3(vehPos.x, vehPos.y, vehPos.z)) < 2.5 and not isChopping then
                         if closestPlate == CurVehPlate then
-                            if not Chopping then
-                                sleep = 1
+                            if not Chopping and not drawTextUp then
+                                -- sleep = 1
+                                drawTextUp = true
                                 SetVehicleEngineHealth(closestVeh, 0)
                                 exports["qb-core"]:DrawText("[E] - Chop Vehicle", "left")
-                                if IsControlJustReleased(0, 38) then
-                                    Chopping = true
-                                    exports['qb-core']:HideText()
-                                    RemoveBlip(DropBlip)
-                                    local data = {
-                                        part = 'bodyshell'
-                                    }
-                                    TriggerEvent('jcc-chopshop:chopBody', data)
-                                end
+                                
                             end
                         end
                     else
+                        drawTextUp = false
                         exports["qb-core"]:HideText()
                     end
                 end
@@ -399,10 +393,28 @@ Citizen.CreateThread(function()
 end)
 Citizen.CreateThread(function()
     while true do
+        local sleep = 1000
+        if drawTextUp == true then
+            sleep = 1
+            if IsControlJustReleased(0, 38) then
+                Chopping = true
+                exports['qb-core']:HideText()
+                RemoveBlip(DropBlip)
+                local data = {
+                    part = 'bodyshell'
+                }
+                TriggerEvent('jcc-chopshop:chopBody', data)
+            end
+        end
+        Citizen.Wait(sleep)
+    end
+end)
+Citizen.CreateThread(function()
+    while true do
         sleep = 1000
-        local ped = PlayerPedId()
-        local coords = GetEntityCoords(ped)
         if HasAssignment then
+            local ped = PlayerPedId()
+            local coords = GetEntityCoords(ped)
             if not zoneSpawned and not zoneDeleted then -- This adds an octogon polyzone around the car, I stayed up way too late figuring this out one night just to realize the next morning I could've made a circle around it but now i kinda like it, it adds character
                 zoneSpawned = true
                 assignmentZone = PolyZone:Create({
@@ -645,12 +657,14 @@ RegisterNetEvent('jcc-chopshop:chopBody', function(data)
                     choppedCar = false
                     HasAssignment = false
                     Chopping = false
+                    drawTextUp = false
                     blackoutTimer = (blackoutTimer + math.random(3,6))
                     TriggerServerEvent('jcc-chopshop:server:chopVehicle', part)
                     ClearPedTasks(ped)
                     DeleteEntity(closestVehicle)
                 end, function()
                     Chopping = false
+                    drawTextUp = false
                     ClearPedTasks(ped)
                     QBCore.Functions.Notify("Canceled", "error")
                 end)
