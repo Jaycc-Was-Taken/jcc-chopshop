@@ -2,6 +2,7 @@ local QBCore = exports['qb-core']:GetCoreObject()
 local blackOut = false
 local blackoutTimer = 0
 local CurVehPlate = nil
+local assignedVehicle = nil
 local currentCar = {}
 local currentLocation = {}
 local HasAssignment = false
@@ -373,14 +374,14 @@ Citizen.CreateThread(function()
                             if not Chopping and not drawTextUp then
                                 -- sleep = 1
                                 drawTextUp = true
-                                SetVehicleEngineHealth(closestVeh, 320)
-                                exports['qb-drawtext']:DrawText("[E] - Chop Vehicle", "left")
+                                SetVehicleEngineHealth(assignedVehicle, 500)
+                                exports["qb-drawtext"]:DrawText("[E] - Chop Vehicle", "left")
                                 
                             end
                         end
                     else
                         drawTextUp = false
-                        exports['qb-drawtext']:HideText()
+                        exports["qb-drawtext"]:HideText()
                     end
                 end
             end
@@ -395,7 +396,7 @@ Citizen.CreateThread(function()
             sleep = 1
             if IsControlJustReleased(0, 38) then
                 Chopping = true
-                exports['qb-core']:HideText()
+                exports['qb-drawtext']:HideText()
                 RemoveBlip(DropBlip)
                 local data = {
                     part = 'bodyshell'
@@ -438,6 +439,7 @@ Citizen.CreateThread(function()
                         SetEntityHeading(veh, currentLocation.w)
                         exports['lj-fuel']:SetFuel(veh, 100.0)
                         SetEntityAsMissionEntity(veh, true, true)
+                        assignedVehicle = veh
                     end, currentLocation, true)
                     vehicleSpawned = true
                 end
@@ -528,12 +530,13 @@ RegisterNetEvent('jcc-chopshop:chopTyre', function(data)
     local ped = PlayerPedId()
     local coords = GetEntityCoords(ped)
     local inZone = chopShopArea:isPointInside(coords)
+    print(assignedVehicle)
     if inZone then 
         local closestVehicle = QBCore.Functions.GetClosestVehicle()
         local closestPlate = QBCore.Functions.GetPlate(closestVehicle)
         if closestPlate == CurVehPlate then
             if IsVehicleTyreBurst(closestVehicle, boneIndex, 1) then return end
-            if choppedParts == neededParts then return end --This is to not allow people to do more parts than the vehicle has if they take the vehicle to a bennys or something, working out a way to make it exploit proof but currently thats the main one, but its limited by this a lot, but this should always be inside the zone, I'm working on making it up to 1 gta unit from edge.
+            if choppedParts == neededParts then return end --This is to not allow people to do more parts than the vehicle has if they take the vehicle to a bennys or something, working out a way to make it exploit proof but currently thats the main one, but its limited by this a lot
                 QBCore.Functions.Progressbar("choptyre", "Chopping tire...", 15000, false, true, {
                     disableMovement = true,
                     disableCarMovement = true,
@@ -547,7 +550,7 @@ RegisterNetEvent('jcc-chopshop:chopTyre', function(data)
                     choppedParts = choppedParts + 1
                     TriggerServerEvent('jcc-chopshop:server:chopVehicle', part)
                     ClearPedTasks(ped)
-                    SetVehicleTyreBurst(closestVehicle, boneIndex, true, 1000.0)
+                    SetVehicleTyreBurst(assignedVehicle, boneIndex, true, 1000.0)
                 end, function()
                     ClearPedTasks(ped)
                     QBCore.Functions.Notify("Canceled", "error")
@@ -565,8 +568,8 @@ RegisterNetEvent('jcc-chopshop:chopDoor', function(data)
         local closestVehicle = QBCore.Functions.GetClosestVehicle()
         local closestPlate = QBCore.Functions.GetPlate(closestVehicle)
         if closestPlate == CurVehPlate then
-            if IsVehicleDoorDamaged(closestVehicle, boneIndex) then return end
-            if choppedParts == neededParts then return end
+            -- if IsVehicleDoorDamaged(closestVehId, boneIndex) then return end
+            if choppedParts == neededParts then return end -- Because I cant figure out a really good way to damage vehicle and make it undriveable after you start chopping it without it blowing up eventually, so if they chop, drive repair, and try to chop the same part again they wont be able to, max parts per vehicle detailed in config
                 SetVehicleDoorOpen(closestVehicle, boneIndex, 0, 1)
                 QBCore.Functions.Progressbar("chopdoor", "Chopping...", 15000, false, true, {
                     disableMovement = true,
@@ -593,12 +596,12 @@ RegisterNetEvent('jcc-chopshop:chopDoor', function(data)
                     choppedParts = choppedParts + 1
                     TriggerServerEvent('jcc-chopshop:server:chopVehicle', part)
                     ClearPedTasks(ped)
-                    SetVehicleDoorBroken(closestVehicle, boneIndex, 1)
-                    -- SetVehicleEngineHealth(closestVehicle, 300)
+                    SetVehicleDoorBroken(assignedVehicle, boneIndex, 1)
+                    -- SetVehicleEngineHealth(closestVehicle, 500)
                     if boneIndex == 4 then 
-                        SmashVehicleWindow(closestVehicle, 6)
+                        SmashVehicleWindow(assignedVehicle, 6)
                     elseif boneIndex == 5 then
-                        SmashVehicleWindow(closestVehicle, 7)
+                        SmashVehicleWindow(assignedVehicle, 7)
                     end
                 end, function()
                     ClearPedTasks(ped)
@@ -653,7 +656,7 @@ RegisterNetEvent('jcc-chopshop:chopBody', function(data)
                     blackoutTimer = (blackoutTimer + math.random(3,6))
                     TriggerServerEvent('jcc-chopshop:server:chopVehicle', part)
                     ClearPedTasks(ped)
-                    DeleteEntity(closestVehicle)
+                    QBCore.Functions.DeleteVehicle(assignedVehicle)
                 end, function()
                     Chopping = false
                     drawTextUp = false

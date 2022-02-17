@@ -24,6 +24,11 @@ Features :
 - qb-target
 - progressbar
 - lj-fuel - But this is easy to change to whatever you use
+- QB-Drawtext
+
+### QB-Drawtext Info :
+- QB-Drawtext is found https://github.com/IdrisDose/qb-drawtext
+- It will soon be baked into the official QB-Core framework, but until it is I'll still be using this one. If you don't know how to change the exports to your drawtext of choice, I recommend utilizing this one for now, but I'll be making a config setting once I get familiar with some popular drawtexts that people use.
 
 ## Preview :
 https://www.youtube.com/watch?v=U8l9bOC-7-Y

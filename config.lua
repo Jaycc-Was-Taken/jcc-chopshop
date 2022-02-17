@@ -360,7 +360,7 @@ Config.CarTypes = { -- Available Cars
     [17] = {
         ["type"] = "exemplar",
         ["name"] = "Dewbauchee Exemplar",
-        ["parts"] = 8
+        ["parts"] = 10
     },
     [18] = {
         ["type"] = "felon",
