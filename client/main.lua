@@ -374,7 +374,7 @@ Citizen.CreateThread(function()
                             if not Chopping and not drawTextUp then
                                 -- sleep = 1
                                 drawTextUp = true
-                                SetVehicleEngineHealth(assignedVehicle, 500)
+                                SetVehicleEngineHealth(assignedVehicle, 700)
                                 exports["qb-drawtext"]:DrawText("[E] - Chop Vehicle", "left")
                                 
                             end
