@@ -19,8 +19,6 @@ local choppedParts = 0
 local Chopping = false
 local choppedCar = false
 local inChopArea = false
-local CurrentBodyHealth = 1000
-local CurrentEngineHealth = 1000
 local chopShopZone = CircleZone:Create(vector2(Config.MainLocations.list.x, Config.MainLocations.list.y), 100, {
     name="chopShopZone",
     debugPoly = false,
@@ -363,7 +361,6 @@ Citizen.CreateThread(function()
         elseif not inZone and spawnedped then
             spawnedped = false
             DeletePed(chopShopPed)
-            exports['qb-target']:RemoveZone('chopShopPed')
         end
         if inChopArea and HasAssignment and hasCar and (choppedParts == neededParts) then
             if not IsPedInAnyVehicle(ped, false) then
@@ -376,14 +373,14 @@ Citizen.CreateThread(function()
                             if not Chopping and not drawTextUp then
                                 -- sleep = 1
                                 drawTextUp = true
-                                SetVehicleEngineHealth(closestVeh, 0)
-                                exports["qb-core"]:DrawText("[E] - Chop Vehicle", "left")
+                                SetVehicleEngineHealth(closestVeh, 320)
+                                exports['qb-drawtext']:DrawText("[E] - Chop Vehicle", "left")
                                 
                             end
                         end
                     else
                         drawTextUp = false
-                        exports["qb-core"]:HideText()
+                        exports['qb-drawtext']:HideText()
                     end
                 end
             end
@@ -486,8 +483,6 @@ RegisterNetEvent('jcc-chopshop:client:getCarAssignment', function()
     Wait(timer * math.random(45000, 60000))
     local randomLocation = GetRandomLocation()
     local randomCar = GetRandomCar()
-    CurrentBodyHealth = 1000
-    CurrentEngineHealth = 1000
     currentLocation.x = Config.CarLocations[randomLocation].x
     currentLocation.y = Config.CarLocations[randomLocation].y
     currentLocation.z = Config.CarLocations[randomLocation].z
@@ -596,13 +591,10 @@ RegisterNetEvent('jcc-chopshop:chopDoor', function(data)
                     }
                 }, {}, function()
                     choppedParts = choppedParts + 1
-                    CurrentBodyHealth = CurrentBodyHealth - 200
-                    CurrentEnineHealth = CurrentEngineHealth - 75
                     TriggerServerEvent('jcc-chopshop:server:chopVehicle', part)
                     ClearPedTasks(ped)
                     SetVehicleDoorBroken(closestVehicle, boneIndex, 1)
-                    SetVehicleEngineHealth(closestVehicle, CurrentEngineHealth)
-                    SetVehicleBodyHealth(closestVehicle, CurrentBodyHealth)
+                    -- SetVehicleEngineHealth(closestVehicle, 300)
                     if boneIndex == 4 then 
                         SmashVehicleWindow(closestVehicle, 6)
                     elseif boneIndex == 5 then
