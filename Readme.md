@@ -1,4 +1,5 @@
 # WIP
+# A LOT OF THINGS DO NOT WORK, DO NOT USE IF YOU DO NOT KNOW WHAT YOU ARE DOING.
 
 ## A Chop Shop for QBCore Framework
 Features :
