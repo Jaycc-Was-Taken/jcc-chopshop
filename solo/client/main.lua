@@ -21,6 +21,7 @@ local Chopping = false
 local choppedCar = false
 local inChopArea = false
 local waitForEmail = false
+local drawTextUp = false
 local chopShopZone = CircleZone:Create(vector2(Config.MainLocations.list.x, Config.MainLocations.list.y), 100, {
     name="chopShopZone",
     debugPoly = false,
@@ -363,7 +364,9 @@ CreateThread(function()
                         blackOut = true
                     end,
                     canInteract = function()
-                        return HasAssignment
+                        if HasAssignment then return true end
+                        if waitForEmail then return true end
+                        return false
                     end
                 }
             }, 
