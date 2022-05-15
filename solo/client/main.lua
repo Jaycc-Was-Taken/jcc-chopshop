@@ -332,7 +332,7 @@ CreateThread(function()
             heading = Config.MainLocations.list.w,
             minZ = (Config.MainLocations.list.z - 1),
             maxZ = (Config.MainLocations.list.z + 1),
-        }, {
+            }, {
             options = {
                 {
                     type = "client",
@@ -518,6 +518,7 @@ RegisterNetEvent('jcc-chopshop:client:getCarAssignment', function()
     end
     Wait(timer * math.random(45000, 60000))
     if waitForEmail then
+        waitForEmail = false
         local randomLocation = GetRandomLocation()
         local randomCar = GetRandomCar()
         currentLocation.x = Config.CarLocations[randomLocation].x
@@ -541,24 +542,26 @@ RegisterNetEvent('jcc-chopshop:client:getCarAssignment', function()
     end
 end)
 RegisterNetEvent('jcc-chopshop:client:setMapMarker', function()
-    HasAssignment = true
-    Citizen.CreateThread(function()
-        local xOffset = math.random(1,2)
-        local xROffset = math.random(1,125)
-        if xOffset == 1 then
-            xROffset = (0 - math.random(1,125))
-        end
-        local yOffset = math.random(1,2)
-        local yROffset = math.random(1,125)
-        if yOffset == 1 then
-            yROffset = (0 - math.random(1,125))
-        end
-        --This is all some dumb shit to have the blip radius thing be offset randomly and can allow the vehicle to be up to 1 GTA unit from the edge of the blip radius EDIT: I actually don't know if this is true anymore, I've edited it around some after it spawned slightly outside the zone so I'm still tweaking it.
-        RadiusBlip = AddBlipForRadius((currentLocation.x + xROffset), (currentLocation.y + yROffset), (currentLocation.z), 200.0)
-        SetBlipRotation(RadiusBlip, 0)
-        SetBlipColour(RadiusBlip, 30)
-        SetBlipAlpha(RadiusBlip, 100)
-    end)
+    if not HasAssignment then
+        HasAssignment = true
+        Citizen.CreateThread(function()
+            local xOffset = math.random(1,2)
+            local xROffset = math.random(1,125)
+            if xOffset == 1 then
+                xROffset = (0 - math.random(1,125))
+            end
+            local yOffset = math.random(1,2)
+            local yROffset = math.random(1,125)
+            if yOffset == 1 then
+                yROffset = (0 - math.random(1,125))
+            end
+            --This is all some dumb shit to have the blip radius thing be offset randomly and can allow the vehicle to be up to 1 GTA unit from the edge of the blip radius EDIT: I actually don't know if this is true anymore, I've edited it around some after it spawned slightly outside the zone so I'm still tweaking it.
+            RadiusBlip = AddBlipForRadius((currentLocation.x + xROffset), (currentLocation.y + yROffset), (currentLocation.z), 200.0)
+            SetBlipRotation(RadiusBlip, 0)
+            SetBlipColour(RadiusBlip, 30)
+            SetBlipAlpha(RadiusBlip, 100)
+        end)
+    end
 end)
 RegisterNetEvent('jcc-chopshop:chopTyre', function(data)
     local boneIndex = data.args.boneIndex
@@ -691,8 +694,7 @@ RegisterNetEvent('jcc-chopshop:chopBody', function(data)
                     vehicleSpawned = false
                     blackoutTimer = (blackoutTimer + math.random(3,6))
                     blackOut = true
-                    local luck = exports['liberty-smallresources']:hasLuck()
-                    TriggerServerEvent('jcc-chopshop:server:chopVehicle', part, luck)
+                    TriggerServerEvent('jcc-chopshop:server:chopVehicle', part)
                     ClearPedTasks(ped)
                     QBCore.Functions.DeleteVehicle(assignedVehicle)
                 end, function()
